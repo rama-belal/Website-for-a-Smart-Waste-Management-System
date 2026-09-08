@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #B5B89B, #D4D0B9);
+      color: #394931;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      width: 700px
+      h
+    }
+
+    .input-field label {
+      margin-bottom: 5px;
+    }
+
+    .input-field input {
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 500px;
+      height:50px
+
+    }
+
+    .submit-btn {
+      background-color: #627a56;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .submit-btn:hover {
+      background-color: #4e6245;
+    }
+
+    .task-item {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px
+    }
+
+    #taskDescription {
+    height: 200px;
+  }
+
+  </style>
+</head>
+<body>
+
+<div class="header">Submit New Task</div>
+
+<div class="input-field">
+  <label for="title">Task Title</label>
+  <input type="text" id="title" placeholder="Enter task title">
+</div>
+
+<div class="input-field">
+  <label for="description">Task Description</label>
+  <input type="text" id="description" placeholder="Enter task description">
+</div>
+
+<button class="submit-btn" onclick="submitTask()">Submit Task</button>
+
+
+
+<div class="header">Unassigned Tasks</div>
+
+<div id="tasks-list">
+  <p>Loading tasks...</p>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyDz-ex7zcF0CReaLGqUHlIXKcD4aHcn5xU",
+      authDomain: "smart-waste-bbff1.firebaseapp.com",
+      projectId: "smart-waste-bbff1",
+      storageBucket: "smart-waste-bbff1.appspot.com",
+      messagingSenderId: "891805348084",
+      appId: "1:891805348084:web:14a784cb2daa6ef0442ea1",
+      measurementId: "G-8GG920MZ6R"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.submitTask = async function () {
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+
+  if (!title || !description) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:8080/tasks/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: title, description: description })
+    });
+
+    if (!response.ok) {
+      throw new Error("Server returned status " + response.status);
+    }
+
+    alert("✅ Task submitted successfully!");
+    document.getElementById("title").value = "";
+    document.getElementById("description").value = "";
+
+
+    fetchUnassignedTasks();
+  } catch (error) {
+    console.error("❌ Error submitting task:", error);
+    alert("❌ Failed to submit task.");
+  }
+}
+
+  async function fetchUnassignedTasks() {
+  const tasksContainer = document.getElementById("tasks-list");
+  tasksContainer.innerHTML = "<p>Loading tasks...</p>";
+
+  try {
+    const response = await fetch("http://localhost:8080/tasks/unassigned");
+    if (!response.ok) {
+      throw new Error("Server returned status " + response.status);
+    }
+    const tasks = await response.json();
+
+    if (tasks.length === 0) {
+      tasksContainer.innerHTML = "<p>No unassigned tasks found.</p>";
+      console.log("No unassigned tasks found.");
+      return;
+    }
+
+    tasksContainer.innerHTML = "";
+    tasks.forEach((task) => {
+      const title = task.title || "Untitled Task";
+      const description = task.description || "No description provided.";
+      const timestamp = task.timestamp ? new Date(task.timestamp.seconds * 1000).toLocaleString(): "Unknown time";
+
+
+      console.log(`📄 Task: ${title}`);
+
+      const taskElement = document.createElement("div");
+      taskElement.classList.add("task-item");
+
+      taskElement.innerHTML = `
+     <strong>${title}</strong><br>
+     ${description}<br>
+     <em>${timestamp}</em>
+`;
+
+      tasksContainer.appendChild(taskElement);
+    });
+  } catch (error) {
+    console.error("❌ Error fetching tasks:", error);
+    tasksContainer.innerHTML = "<p>Failed to load tasks.</p>";
+  }
+}
+
+
+  fetchUnassignedTasks();
+
+</script>
+
+</body>
+</html>
+
+
+
+
