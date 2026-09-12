@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detailed Status</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #B5B89B, #D4D0B9);
+      color: #394931;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .sensor-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .sensor-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+      max-width: 960px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+      width: 45%;
+      max-width: 450px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-sizing: border-box;
+    }
+
+    .label {
+      font-size: 20px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      border-radius: 10px;
+      background-color: #ccc;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      transition: width 0.3s;
+    }
+
+    .safe { background-color: green; }
+    .medium { background-color: blue; }
+    .danger { background-color: red; }
+
+    .smoke-status {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 8px;
+      width: fit-content;
+      margin: 10px auto;
+    }
+
+    .smoke-safe { background-color: green; color: white; }
+    .smoke-danger { background-color: red; color: white; }
+
+    .trash-icon {
+      font-size: 100px;
+      transition: transform 0.4s ease, color 0.4s ease;
+    }
+
+    .degree-value {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    .nav-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #e0e0e0;
+      color: #394931;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-button:hover {
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+<h1>Live Bin Sensor Readings</h1>
+<div class="sensor-container">
+  <div class="sensor-row">
+    <div class="card">
+      <div class="label">fullness: <span id="distanceValue">--</span> </div>
+      <div class="progress-bar">
+        <div id="distanceBar" class="fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Smoke: <span id="smokeValue">--</span></div>
+      <div id="smokeStatus" class="smoke-status">--</div>
+    </div>
+  </div>
+
+  <div class="sensor-row">
+    <div class="card">
+      <div class="label">Pitch</div>
+      <div id="pitchIcon" class="trash-icon">🗑️</div>
+      <div id="pitchValue" class="degree-value">--°</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Roll</div>
+      <div id="rollIcon" class="trash-icon">🗑️</div>
+      <div id="rollValue" class="degree-value">--°</div>
+    </div>
+
+
+    <div class="card">
+      <div class="label">Estimated Time to Full</div>
+      <div id="etaBox" class="degree-value">--</div>
+    </div>
+  </div>
+</div>
+
+
+<button class="nav-button" onclick="window.location.href='http://127.0.0.1:5000/'">
+  View History Dashboard
+</button>
+
+<script>
+
+  function updateSensorDisplay(data) {
+    const distance = data.distance || 0;
+    const smoke = data.smoke || 0;
+    const pitch = data.pitch || 0;
+    const roll = data.roll || 0;
+
+    const binHeight = 150; // cm
+    const clampedDistance = Math.min(Math.max(distance, 0), binHeight); // between 0 and 150
+    const fullness = Math.round(((binHeight - clampedDistance) / binHeight) * 100);
+
+    document.getElementById('distanceValue').textContent = `${fullness}% full`;
+
+    const distanceBar = document.getElementById('distanceBar');
+    distanceBar.style.width = `${fullness}%`;
+    distanceBar.className = 'fill';
+    if (distance > 60) distanceBar.classList.add('safe');
+    else if (distance > 12) distanceBar.classList.add('medium');
+    else distanceBar.classList.add('danger');
+
+    document.getElementById('smokeValue').textContent = smoke;
+    const smokeStatus = document.getElementById('smokeStatus');
+    if (smoke < 8000) {
+      smokeStatus.textContent = 'no smoke detected';
+      smokeStatus.className = 'smoke-status smoke-safe';
+    } else {
+      smokeStatus.textContent = 'smoke detected ';
+      smokeStatus.className = 'smoke-status smoke-danger';
+    }
+
+    document.getElementById('pitchValue').textContent = `${pitch}°`;
+    const pitchIcon = document.getElementById('pitchIcon');
+    if (pitch > 45 || pitch < -45) {
+      pitchIcon.style.transform = 'rotate(40deg)';
+      pitchIcon.style.color = 'red';
+    } else {
+      pitchIcon.style.transform = 'rotate(0deg)';
+      pitchIcon.style.color = 'green';
+    }
+
+    document.getElementById('rollValue').textContent = `${roll}°`;
+    const rollIcon = document.getElementById('rollIcon');
+    if (roll > 45 || roll < -45) {
+      rollIcon.style.transform = 'rotate(40deg)';
+      rollIcon.style.color = 'red';
+    } else {
+      rollIcon.style.transform = 'rotate(0deg)';
+      rollIcon.style.color = 'green';
+    }
+  }
+
+  async function fetchLatestSensorData() {
+    try {
+      const response = await fetch("http://localhost:8080/api/sensor-data/latest");
+      if (!response.ok) {
+        throw new Error("Server returned status " + response.status);
+      }
+      const data = await response.json();
+      if (!data) {
+        console.log("No data found.");
+        return;
+      }
+      updateSensorDisplay(data);
+    } catch (error) {
+      console.error("Failed to fetch sensor data:", error);
+    }
+  }
+
+
+  fetchLatestSensorData();
+  setInterval(fetchLatestSensorData, 5000);
+
+  // Fetch estimated time to full
+  fetch("http://127.0.0.1:5001/predict")
+    .then(response => response.json())
+    .then(data => {
+      const eta = data.estimated_time_to_full;
+      const etaText = `${eta.days} day(s), ${eta.hours} hour(s)`;
+      const etaBox = document.getElementById("etaBox");
+      etaBox.textContent = etaText;
+      etaBox.style.backgroundColor = "#f0f0f0";
+      etaBox.style.padding = "10px";
+      etaBox.style.borderRadius = "10px";
+      etaBox.style.color = "#394931";
+      etaBox.style.fontWeight = "bold";
+      etaBox.style.boxShadow = "0px 4px 12px rgba(0, 0, 0, 0.2)";
+    })
+    .catch(error => {
+      console.error("Failed to fetch prediction:", error);
+      const etaBox = document.getElementById("etaBox");
+      etaBox.textContent = "Error loading prediction";
+      etaBox.style.color = "red";
+    });
+</script>
+</body>
+</html>
