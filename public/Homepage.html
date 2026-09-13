@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Waste Management</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #B5B89B, #D4D0B9);
+            color: #394931;
+            text-align: center;
+            margin: 0;
+            padding-bottom: 80px;
+        }
+
+        /* Centering Content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+        }
+
+        /* Admin Greeting */
+        .admin-message {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Bin Status Card */
+        .bin-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        .bin-card h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        /* View Status Button */
+        .view-status {
+            background-color: #f5f5f5;
+            color: #394931;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease-in-out, background-color 0.3s;
+        }
+
+        .view-status:hover {
+            transform: scale(1.05);
+            background-color: #e0e0e0;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 10px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Navigation Buttons */
+        .nav-button {
+            font-size: 14px;
+            font-weight: bold;
+            background: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, background-color 0.3s, box-shadow 0.3s;
+            color: #394931;
+        }
+
+        .nav-button:hover {
+            transform: scale(1.1);
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Admin Message -->
+    <div class="admin-message">
+        Welcome, Admin! Manage the smart waste system efficiently🌱
+    </div>
+
+    <!-- Bin Status Card -->
+    <div class="bin-card">
+        <h2>🗑️ Bin#1</h2>
+        <button class="nav-button" onclick="window.location.href='data.html'">Veiw Status</button>
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-navbar">
+    <button class="nav-button" onclick="window.location.href='Auth.html'">LOGOUT</button>
+    <button class="nav-button" onclick="window.location.href='tasks.html'">+ TASK</button>
+
+    <button class="nav-button" onclick="window.location.href='reportsSection.html'">REPORTS</button>
+</div>
+
+</body>
+</html>

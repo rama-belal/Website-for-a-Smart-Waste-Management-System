@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report a Problem</title>
+
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #B5B89B, #D4D0B9);
+        color: #394931;
+        text-align: center;
+        margin: 0;
+    }
+
+    .message {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    .form-container {
+        background: rgba(255, 255, 255, 0.2);
+        width: 90%;
+        max-width: 450px;
+        margin: auto;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    input, textarea {
+        width: 95%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        border: 3px solid #ccc;
+        font-size: 16px;
+    }
+
+    .btn {
+        background-color: #394931;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+        background-color: #2b3626;
+    }
+  </style>
+</head>
+<body>
+
+<div class="message">
+  Your feedback helps us improve!🌱<br>
+  Please report any issues you find, and we'll address them as soon as possible.
+</div>
+
+<div class="form-container">
+  <input type="text" id="name" placeholder="Your Name">
+  <input type="text" id="phone" placeholder="Your Phone Number">
+  <textarea id="problem-description" placeholder="What is the problem?"></textarea>
+  <br>
+  <button class="btn" onclick="submitReport()">Submit Report</button>
+</div>
+
+
+<script type="module">
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyDz-ex7zcF0CReaLGqUHlIXKcD4aHcn5xU",
+      authDomain: "smart-waste-bbff1.firebaseapp.com",
+      projectId: "smart-waste-bbff1",
+      storageBucket: "smart-waste-bbff1.firebasestorage.app",
+      messagingSenderId: "891805348084",
+      appId: "1:891805348084:web:14a784cb2daa6ef0442ea1",
+      measurementId: "G-8GG920MZ6R"
+  };
+
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+
+  window.submitReport = async function () {
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const description = document.getElementById("problem-description").value;
+    const source = "Web Form";
+
+    if (!name || !phone || !description) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+    alert("Name should only contain letters and spaces.");
+    return;
+}
+
+    const cleanedPhone = phone.replace(/\D/g, '');
+    if (cleanedPhone.length < 10) {
+    alert("Phone number must be at least 10 digits.");
+    return;
+}
+
+    try {
+
+      await addDoc(collection(db, "reports"), {
+        report_id: Date.now().toString(),
+        name: name,
+        phone_num: phone,
+        description: description,
+        source: source,
+        timestamp: new Date()
+      });
+
+      alert("Report submitted successfully!");
+
+
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("problem-description").value = "";
+    } catch (error) {
+      alert("Error submitting report: " + error.message);
+    }
+  };
+</script>
+
+</body>
+</html>
