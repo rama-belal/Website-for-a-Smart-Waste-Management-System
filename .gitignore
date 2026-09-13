@@ -1,0 +1,24 @@
+# Java + Spring Boot
+/target/
+*.log
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+src/main/resources/firebase/
+
+# Firebase
+.firebase/
+
+# IntelliJ IDEA
+/.idea/
+*.iml
+*.iws
+*.ipr
+
+# Node
+/node_modules/
+package-lock.json
+
+# System junk
+.DS_Store
+Thumbs.db
