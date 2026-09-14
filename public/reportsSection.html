@@ -150,6 +150,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDz-ex7zcF0CReaLGqUHlIXKcD4aHcn5xU",
@@ -163,6 +164,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   window.goBack = function () {
     window.location.href = "Homepage.html";
@@ -287,7 +289,13 @@
     document.getElementById("report-modal").style.display = "none";
   };
 
-  fetchReports();
+  onAuthStateChanged(auth, (user) => {
+  if (user) {
+    fetchReports();
+  } else {
+    window.location.href = "Auth.html";
+  }
+});
 </script>
 </body>
 </html>
