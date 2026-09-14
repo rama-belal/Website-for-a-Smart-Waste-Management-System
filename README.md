@@ -1,4 +1,4 @@
-# Smart Waste Management Website
+# Website for a Smart Waste Management System
 
 A part of an IoT-based smart waste management system that monitors bin status in real time and helps streamline waste collection and issue reporting.
 
