@@ -121,10 +121,20 @@
     return;
   }
 
+  const user = auth.currentUser;
+  if (!user) {
+    alert("You must be logged in.");
+    return;
+  }
+  const idToken = await user.getIdToken();
+
   try {
     const response = await fetch("http://localhost:8080/tasks/submit", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + idToken
+      },
       body: JSON.stringify({ title: title, description: description })
     });
 
@@ -135,8 +145,6 @@
     alert("✅ Task submitted successfully!");
     document.getElementById("title").value = "";
     document.getElementById("description").value = "";
-
-
     fetchUnassignedTasks();
   } catch (error) {
     console.error("❌ Error submitting task:", error);
@@ -148,8 +156,14 @@
   const tasksContainer = document.getElementById("tasks-list");
   tasksContainer.innerHTML = "<p>Loading tasks...</p>";
 
+  const user = auth.currentUser;
+  if (!user) return;
+  const idToken = await user.getIdToken();
+
   try {
-    const response = await fetch("http://localhost:8080/tasks/unassigned");
+    const response = await fetch("http://localhost:8080/tasks/unassigned", {
+      headers: { "Authorization": "Bearer " + idToken }
+    });
     if (!response.ok) {
       throw new Error("Server returned status " + response.status);
     }
@@ -166,7 +180,6 @@
       const title = task.title || "Untitled Task";
       const description = task.description || "No description provided.";
       const timestamp = task.timestamp ? new Date(task.timestamp.seconds * 1000).toLocaleString(): "Unknown time";
-
 
       console.log(`📄 Task: ${title}`);
 
