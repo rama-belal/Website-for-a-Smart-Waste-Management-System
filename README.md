@@ -65,3 +65,29 @@ This project connects to a specific Firebase project (Firestore + Realtime Datab
 2. Create a Firebase project with Firestore and Realtime Database enabled.
 3. Update the Firebase web config in the HTML files to match your own project.
 4. Serve the `public/` folder via Firebase Hosting, or open the HTML files directly for local testing.
+
+## Screenshots
+
+**Homepage**
+
+Navigation hub for the admin dashboard.
+![Homepage](screenshots/homepage.png)
+
+**Live Sensor Readings**
+
+Bin fullness, tilt, and smoke levels, captured while hardware was connected.
+![Sensor Dashboard](screenshots/sensor-dashboard.png)
+
+**Reports**
+
+Admin view of issues reported by the public (via QR form) and by field workers (via the mobile app).
+![Reports](screenshots/reports.png)
+
+**Task Management**
+
+Admin creates tasks; unassigned tasks are tracked until picked up by a worker via the mobile app.
+![Tasks](screenshots/tasks.png)
+
+**Public Report Form (via QR code)**
+The page a user reaches after scanning the QR code on a physical bin.
+![QR Report Form](screenshots/qr-form-mobile.png)
